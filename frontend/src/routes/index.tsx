@@ -5,5 +5,5 @@ import { AuthRoutes } from "./auth.routes";
 export function Routes() {
    const { user } = useAuth();
 
-   return false ? <AppRoutes /> : <AuthRoutes />;
+   return user.name ? <AppRoutes /> : <AuthRoutes />;
 }

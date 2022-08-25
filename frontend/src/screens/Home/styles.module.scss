@@ -10,26 +10,39 @@
 .messages::-webkit-scrollbar-thumb {
    background-color: #9796f0;
 }
+
 .content {
    padding: 0 !important;
    display: flex;
-   min-width: 1000px;
+   width: 80% !important;
    justify-content: space-between;
    flex-direction: column;
+   align-items: inherit !important;
+}
 
+.welcome {
+   display: flex;
+   padding: 0px 60px 0px;
+   align-items: center;
+   justify-content: space-between;
+   text-align: right;
+
+
+   & > div > p > b {
+      color: #9796f0;
+   }
    & > h1 {
       font-size: 42px;
       text-transform: uppercase;
-      text-align: center;
       margin-top: 50px;
       margin-bottom: 20px;
    }
 }
 
 .messages {
-   height: 95%;
+   height: 500px;
    overflow: auto;
-   padding: 60px;
+   padding: 60px 60px 0px;
    color: rgb(34, 34, 34);
    text-align: justify;
 
@@ -60,7 +73,7 @@
    }
 }
 
-.send-message {
+.sendMessage {
    color: #000;
    background: rgb(255 255 255 / 15%);
    border-bottom-left-radius: 16px;
@@ -68,7 +81,7 @@
    padding: 40px 60px;
 }
 
-.form-group {
+.formGroup {
    display: flex;
    background: white;
    align-items: center;
@@ -94,4 +107,15 @@
       font-size: 20px;
       margin-left: 20px;
    }
+}
+
+.logout {
+   position: absolute;
+   right: 0;
+   top: 0;
+   background: #2c90fc;
+   padding: 10px;
+   border-top-right-radius: 16px;
+   border-bottom-left-radius: 16px;
+   cursor: pointer;
 }

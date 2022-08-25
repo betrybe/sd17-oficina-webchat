@@ -10,12 +10,8 @@ import { toast } from "react-toastify";
 import { api } from "../services/api";
 
 interface User {
-   token: string;
    name: string;
-   email: string;
-   username: string;
-   avatar?: string;
-   description?: string;
+   token: string;
 }
 
 interface SignInProps {
@@ -27,6 +23,7 @@ interface AuthContextData {
    user: User;
    signIn: (credential: SignInProps) => Promise<void>;
    signOut: () => void;
+   createUser: (data: User) => void;
 }
 
 interface AuthProviderProps {
@@ -39,75 +36,61 @@ function AuthProvider({ children }: AuthProviderProps) {
    const navigate = useNavigate();
    const [user, setUser] = useState({} as User);
 
-   // useEffect(() => {
-   //    async function getData() {
-   //       const token = localStorage.getItem("social@token");
+   useEffect(() => {
+      async function getData() {
+         try {
+            const name = localStorage.getItem("webchat@name") as string;
+            const token = localStorage.getItem("webchat@token") as string;
 
-   //       if (!token) {
-   //          navigate("/");
-   //          return;
-   //       }
+            if (!token) return signOut();
 
-   //       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-   //       try {
-   //          const { data } = await api.post("/me");
-   //          setUser({
-   //             name: data.user.name,
-   //             email: data.user.email,
-   //             username: data.user.username,
-   //             avatar: data.user.avatar,
-   //             description: data.user.description,
-   //             token,
-   //          });
-
-   //          navigate("/home");
-   //       } catch (error) {
-   //          signOut();
-   //          return;
-   //       }
-   //    }
-
-   //    getData();
-   // }, []);
-
-   async function signIn({ email, password }: SignInProps) {
-      const { data } = await api.post("/login", {
-         email,
-         password,
-      });
-
-      if (data.error) {
-         toast.warning(data.message);
-         return;
+            setUser({ name, token });
+            navigate("/home");
+         } catch (error) {
+            signOut();
+            return;
+         }
       }
 
-      if (!data.error) {
-         setUser({
-            token: data.token,
-            name: data.user.name,
-            email: data.user.email,
-            username: data.user.username,
-            avatar: data.user.avatar,
-            description: data.user.description,
-         });
+      getData();
+   }, []);
 
-         localStorage.setItem("social@token", data.token);
-         api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-         navigate("/home");
+   function createUser({name, token}: User) {
+      setUser({ name, token });
+
+      api.defaults.headers.common['Authorization'] = `${token}`;
+      localStorage.setItem("webchat@name", name);
+      localStorage.setItem("webchat@token", token);
+      navigate("/home");
+   }
+
+   async function signIn(dataForm: SignInProps) {
+      try {
+         const { data } = await api.post("/users", dataForm);
+   
+         if (data.error) {
+            toast.warning(data.message);
+            return;
+         }
+   
+         if (!data.error) {
+            createUser(data);
+         }
+      } catch (error) {
+         toast.warning('E-mail ou senha incorretos');
       }
    }
 
    function signOut() {
-      delete api.defaults.headers.common["Authorization"];
-
-      localStorage.removeItem("social@token");
+      localStorage.removeItem("webchat@name");
+      localStorage.removeItem("webchat@token");
 
       setUser({} as User);
       navigate("/");
    }
 
    return (
-      <AuthContext.Provider value={{ user, signIn, signOut }}>
+      <AuthContext.Provider value={{ user, signIn, signOut, createUser }}>
          {children}
       </AuthContext.Provider>
    );

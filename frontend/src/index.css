@@ -42,4 +42,11 @@ input:focus, textarea:focus  {
    backdrop-filter: blur(5px);
    -webkit-backdrop-filter: blur(5px);
    padding: 40px;
+   align-items: center;
+   display: flex;
+   flex-direction: column;
+}
+
+.links {
+   color: #100f2b !important;
 }

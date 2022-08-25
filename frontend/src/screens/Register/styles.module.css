@@ -1,0 +1,54 @@
+.img {
+   position: absolute;
+   bottom: 0;
+}
+
+.form {
+   margin-top: 50px;
+}
+
+.title {
+   text-transform: Uppercase;
+   margin-bottom: 0.5em;
+   font-family: "Rubik Mono One", sans-serif;
+   font-size: 3.5rem;
+   color: #e4e5e6;
+}
+
+.title {
+   position: relative;
+   background: linear-gradient(to right, #24243e, #141e30, #0f0c29);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+}
+
+.title:before,
+.title:after {
+   content: attr(data-text);
+   position: absolute;
+   top: 0;
+   left: 0;
+}
+
+.title:before {
+   z-index: -1;
+   text-shadow: -0.001em -0.001em 1px rgba(255, 255, 255, 0.15);
+}
+
+.title:after {
+   z-index: -2;
+   text-shadow: 10px 10px 10px rgba(0, 0, 0, 0.5),
+      20px 20px 20px rgba(0, 0, 0, 0.4), 30px 30px 30px rgba(0, 0, 0, 0.1);
+   mix-blend-mode: multiply;
+}
+
+.dialog {
+   width: 0;
+   height: 0;
+   border-top: 0 solid transparent;
+   border-bottom: 52px solid transparent;
+   border-left: 60px solid #ffffff38;
+   position: absolute;
+   bottom: -52px;
+   left: 27px;
+}
