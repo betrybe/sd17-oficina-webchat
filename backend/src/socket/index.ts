@@ -8,6 +8,13 @@ export let socketIO: Socket<
    any
 >;
 
+export let serverIO: Server<
+   DefaultEventsMap,
+   DefaultEventsMap,
+   DefaultEventsMap,
+   any
+>;
+
 export function startInstanceSocket(server: any) {
    const io = new Server(server, {
       cors: {
@@ -18,4 +25,6 @@ export function startInstanceSocket(server: any) {
    io.on("connection", (socket) => {
       socketIO = socket;
    });
+
+   serverIO = io;
 }

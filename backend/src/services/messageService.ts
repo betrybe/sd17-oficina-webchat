@@ -1,6 +1,6 @@
 import MessageModel from "../database/models/MessageModel";
 import UserModel from "../database/models/UserModel";
-import { socketIO } from "../socket";
+import { serverIO, socketIO } from "../socket";
 
 export class MessageService {
    async create(message: string, userId: number) {
@@ -14,7 +14,7 @@ export class MessageService {
          include: [{ model: UserModel, as: "user", attributes: ["name"] }],
       });
 
-      socketIO.broadcast.emit("receiveMessage", fullMessage);
+      serverIO.emit("receiveMessage", fullMessage);
 
       return fullMessage;
    }

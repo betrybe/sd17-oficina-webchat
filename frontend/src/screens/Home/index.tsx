@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+   InputHTMLAttributes,
+   useCallback,
+   useEffect,
+   useRef,
+   useState,
+} from "react";
 import { FiLogOut, FiSend } from "react-icons/fi";
 import { toast } from "react-toastify";
 import io from "socket.io-client";
@@ -17,9 +23,10 @@ interface IMessage {
 }
 export function Home() {
    const { signOut, user } = useAuth();
-   const [message, setMessage] = useState("");
+   const inputRef = useRef<HTMLInputElement>(null);
    const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
    const messagesEndRef = useRef<HTMLDivElement>(null);
+   console.log("Hello");
 
    function scrollToBottom() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,7 +56,9 @@ export function Home() {
       scrollToBottom();
    }, [messages]);
 
-   useEffect(() => {
+   useCallback(() => {
+      console.log(messages);
+
       socket.on("connect", () => {
          console.log(`Socket ${socket.id} connected`);
       });
@@ -66,9 +75,13 @@ export function Home() {
             received: Number(user.id) === data.userId,
          };
 
+         console.log(messages);
+
          const copyMessages = [...messages];
          copyMessages.push(newMessage);
-         setMessages(copyMessages);
+
+         console.log(copyMessages);
+         // setMessages(copyMessages);
       });
 
       return () => {
@@ -80,12 +93,13 @@ export function Home() {
    async function sendMessage(e: any) {
       e.preventDefault();
       try {
-         if(!message) {
-            toast.warning('Informe uma mensagem');
-            return
+         const message = inputRef.current?.value;
+
+         if (!message) {
+            toast.warning("Informe uma mensagem");
+            return;
          }
          await api.post("messages", { message });
-         setMessage("");
       } catch (error) {
          toast.warning("Sessão expirada, realize o login novamente.");
          signOut();
@@ -133,15 +147,10 @@ export function Home() {
                })}
                <div ref={messagesEndRef} />
             </div>
-            <form className={styles.sendMessage}>
+            <form onSubmit={sendMessage} className={styles.sendMessage}>
                <div className={styles.formGroup}>
-                  <input
-                     onChange={(evt) => setMessage(evt.target.value)}
-                     type="text"
-                     placeholder="Mensagem"
-                     value={message}
-                  />
-                  <button onClick={sendMessage} disabled={!message.length}>
+                  <input ref={inputRef} type="text" placeholder="Mensagem" />
+                  <button type="submit">
                      <FiSend />
                   </button>
                </div>
