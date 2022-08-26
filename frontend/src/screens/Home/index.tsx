@@ -56,9 +56,7 @@ export function Home() {
       scrollToBottom();
    }, [messages]);
 
-   useCallback(() => {
-      console.log(messages);
-
+   useEffect(() => {
       socket.on("connect", () => {
          console.log(`Socket ${socket.id} connected`);
       });
@@ -75,13 +73,7 @@ export function Home() {
             received: Number(user.id) === data.userId,
          };
 
-         console.log(messages);
-
-         const copyMessages = [...messages];
-         copyMessages.push(newMessage);
-
-         console.log(copyMessages);
-         // setMessages(copyMessages);
+         setMessages((messages) => [...messages, newMessage]);
       });
 
       return () => {
