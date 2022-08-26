@@ -22,11 +22,11 @@
 
 .welcome {
    display: flex;
-   padding: 0px 60px 0px;
+   padding: 30px 60px;
    align-items: center;
    justify-content: space-between;
    text-align: right;
-
+   box-shadow: 0 13px 20px -15px #7d7d7d75;
 
    & > div > p > b {
       color: #9796f0;
@@ -34,8 +34,6 @@
    & > h1 {
       font-size: 42px;
       text-transform: uppercase;
-      margin-top: 50px;
-      margin-bottom: 20px;
    }
 }
 

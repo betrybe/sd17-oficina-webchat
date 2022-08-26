@@ -26,7 +26,6 @@ export function Home() {
    const inputRef = useRef<HTMLInputElement>(null);
    const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
    const messagesEndRef = useRef<HTMLDivElement>(null);
-   console.log("Hello");
 
    function scrollToBottom() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,6 +91,9 @@ export function Home() {
             return;
          }
          await api.post("messages", { message });
+         inputRef.current.value = ''
+         inputRef.current.focus();
+         scrollToBottom();
       } catch (error) {
          toast.warning("Sessão expirada, realize o login novamente.");
          signOut();

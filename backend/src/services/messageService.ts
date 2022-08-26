@@ -1,13 +1,18 @@
 import MessageModel from "../database/models/MessageModel";
 import UserModel from "../database/models/UserModel";
-import { serverIO, socketIO } from "../socket";
+import { serverIO } from "../socket";
 
 export class MessageService {
    async create(message: string, userId: number) {
       const newMessage = await MessageModel.create({
          message,
          userId,
+      }, {
+         include: [{ model: UserModel, as: "user", attributes: ["name"] }],
       });
+
+      console.log(newMessage);
+      
 
       const fullMessage = await MessageModel.findOne({
          where: { id: newMessage.id },

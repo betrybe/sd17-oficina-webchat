@@ -1,12 +1,5 @@
-import { Server, Socket } from "socket.io";
+import { Server } from "socket.io";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-
-export let socketIO: Socket<
-   DefaultEventsMap,
-   DefaultEventsMap,
-   DefaultEventsMap,
-   any
->;
 
 export let serverIO: Server<
    DefaultEventsMap,
@@ -22,9 +15,7 @@ export function startInstanceSocket(server: any) {
       },
    });
 
-   io.on("connection", (socket) => {
-      socketIO = socket;
-   });
+   io.on("connection", () => {});
 
    serverIO = io;
 }
