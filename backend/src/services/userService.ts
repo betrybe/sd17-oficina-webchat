@@ -86,7 +86,7 @@ export class UserService {
          }),
       });
 
-      return { token, name };
+      return { token, user };
    }
 
    async login(email: string, password: string) {
@@ -99,6 +99,6 @@ export class UserService {
          }),
       });
 
-      return { token, name: user.name };
+      return { token, user };
    }
 }

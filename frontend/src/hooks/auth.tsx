@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { api } from "../services/api";
 
 interface User {
+   id: string;
    name: string;
    token: string;
 }
@@ -39,12 +40,14 @@ function AuthProvider({ children }: AuthProviderProps) {
    useEffect(() => {
       async function getData() {
          try {
+            const id = localStorage.getItem("webchat@id") as string;
             const name = localStorage.getItem("webchat@name") as string;
             const token = localStorage.getItem("webchat@token") as string;
 
             if (!token) return signOut();
 
-            setUser({ name, token });
+            api.defaults.headers.common["Authorization"] = `${token}`;
+            setUser({ id, name, token });
             navigate("/home");
          } catch (error) {
             signOut();
@@ -55,10 +58,11 @@ function AuthProvider({ children }: AuthProviderProps) {
       getData();
    }, []);
 
-   function createUser({name, token}: User) {
-      setUser({ name, token });
+   function createUser({ id, name, token }: User) {
+      setUser({ id, name, token });
 
-      api.defaults.headers.common['Authorization'] = `${token}`;
+      api.defaults.headers.common["Authorization"] = `${token}`;
+      localStorage.setItem("webchat@id", id);
       localStorage.setItem("webchat@name", name);
       localStorage.setItem("webchat@token", token);
       navigate("/home");
@@ -67,23 +71,29 @@ function AuthProvider({ children }: AuthProviderProps) {
    async function signIn(dataForm: SignInProps) {
       try {
          const { data } = await api.post("/users", dataForm);
-   
+
          if (data.error) {
             toast.warning(data.message);
             return;
          }
-   
+
          if (!data.error) {
-            createUser(data);
+            const objUser = {
+               id: data.user.id,
+               name: data.user.name,
+               token: data.token,
+            };
+            createUser(objUser);
          }
       } catch (error) {
-         toast.warning('E-mail ou senha incorretos');
+         toast.warning("E-mail ou senha incorretos");
       }
    }
 
    function signOut() {
       localStorage.removeItem("webchat@name");
       localStorage.removeItem("webchat@token");
+      localStorage.removeItem("webchat@id");
 
       setUser({} as User);
       navigate("/");

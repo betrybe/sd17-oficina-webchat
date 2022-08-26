@@ -8,15 +8,15 @@ export class UserController {
    async login(request: Request, response: Response) {
       const { email, password } = request.body;
 
-      const { token, name } = await this.userService.login(email, password);
+      const { token, user } = await this.userService.login(email, password);
 
-      return response.status(200).send({ token, name });
+      return response.status(200).send({ token, user });
    };
 
    async create(request: Request, response: Response) {
       const userData = request.body as IUser;
-      const { token, name } = await this.userService.create(userData);
+      const { token, user } = await this.userService.create(userData);
 
-      response.status(201).send({ token, name });
+      response.status(201).send({ token, user });
    }
 }

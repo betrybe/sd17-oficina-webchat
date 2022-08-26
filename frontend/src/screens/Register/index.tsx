@@ -42,7 +42,12 @@ export function Register() {
          if (status === 201) {
             toast.success("Usuário criado com sucesso");
 
-            createUser(data);
+            const objUser = {
+               id: data.user.id,
+               name: data.user.name,
+               token: data.token,
+            };
+            createUser(objUser);
          }
       } catch (error: any) {
          console.log(error);

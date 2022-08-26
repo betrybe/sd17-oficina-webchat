@@ -8,48 +8,88 @@ import styles from "./styles.module.scss";
 
 const socket = io("http://localhost:3333");
 
+interface IMessage {
+   id: number;
+   date: string;
+   name: string;
+   message: string;
+   received: boolean;
+}
 export function Home() {
-   const { signOut } = useAuth();
-   const [isConnected, setIsConnected] = useState(false);
+   const { signOut, user } = useAuth();
    const [message, setMessage] = useState("");
+   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
    const messagesEndRef = useRef<HTMLDivElement>(null);
-   const name = localStorage.getItem("webchat@name");
 
    function scrollToBottom() {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
    }
 
-   const lorem = `Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-   Inventore voluptatibus distinctio ducimus culpa quaerat
-   eaque aperiam unde, nam quod ipsam quidem incidunt itaque
-   illum perferendis praesentium! Saepe nihil veniam
-   similique?`;
+   useEffect(() => {
+      async function loadAllMessages() {
+         const { data } = await api.get("/messages");
 
-   const messages = [...Array(20).keys()].map((item, index) => ({
-      id: index + 1,
-      date: new Date().toLocaleString("pt-BR", {
-         hour: "2-digit",
-         minute: "2-digit",
-      }),
-      name: "Gabriel Novais",
-      message: index < 18 ? "Hello World" : lorem,
-      received: (index % 3) % 2,
-   }));
+         const messagesFormatted = data.map((item: any) => ({
+            id: item.id,
+            date: new Date(item.createdAt).toLocaleString("pt-BR", {
+               hour: "2-digit",
+               minute: "2-digit",
+            }),
+            name: item.user.name,
+            message: item.message,
+            received: Number(user.id) === item.userId,
+         }));
+
+         setMessages(messagesFormatted);
+      }
+      loadAllMessages();
+   }, []);
 
    useEffect(() => {
       scrollToBottom();
    }, [messages]);
 
    useEffect(() => {
-      socket.on("receiveMessage", (data) => {
-         console.log('receiveMessage', data);
+      socket.on("connect", () => {
+         console.log(`Socket ${socket.id} connected`);
       });
-   }, []);
 
+      socket.on("receiveMessage", (data) => {
+         const newMessage = {
+            id: data.id,
+            date: new Date(data.createdAt).toLocaleString("pt-BR", {
+               hour: "2-digit",
+               minute: "2-digit",
+            }),
+            name: data.user.name,
+            message: data.message,
+            received: Number(user.id) === data.userId,
+         };
+
+         const copyMessages = [...messages];
+         copyMessages.push(newMessage);
+         setMessages(copyMessages);
+      });
+
+      return () => {
+         socket.off("connect");
+         socket.off("receiveMessage");
+      };
+   }, []);
 
    async function sendMessage(e: any) {
       e.preventDefault();
-      await api.post("messages", { message });
+      try {
+         if(!message) {
+            toast.warning('Informe uma mensagem');
+            return
+         }
+         await api.post("messages", { message });
+         setMessage("");
+      } catch (error) {
+         toast.warning("Sessão expirada, realize o login novamente.");
+         signOut();
+      }
    }
 
    return (
@@ -62,7 +102,7 @@ export function Home() {
                <h1>Chat expresso 17</h1>
                <div>
                   <p>
-                     Bem vindo(a) <br /> <b>{name}</b>
+                     Bem vindo(a) <br /> <b>{user.name}</b>
                   </p>
                </div>
             </div>
@@ -99,9 +139,9 @@ export function Home() {
                      onChange={(evt) => setMessage(evt.target.value)}
                      type="text"
                      placeholder="Mensagem"
-                     defaultValue={message}
+                     value={message}
                   />
-                  <button onClick={sendMessage} disabled={!!!message.length}>
+                  <button onClick={sendMessage} disabled={!message.length}>
                      <FiSend />
                   </button>
                </div>

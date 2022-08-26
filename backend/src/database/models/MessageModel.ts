@@ -40,12 +40,12 @@ MessageModel.init(
 );
 
 MessageModel.belongsTo(UserModel, {
-   foreignKey: "id",
+   foreignKey: "userId",
    as: "user",
 });
 
 UserModel.hasMany(MessageModel, {
-   foreignKey: "userId",
+   foreignKey: "id",
    as: "messages",
 });
 
