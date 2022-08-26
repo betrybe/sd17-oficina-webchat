@@ -10,6 +10,7 @@ progressBar: true
 ---
 
 ![alt logo socket.io](/socket.io-logo.png)
+- [Empresas](https://stackshare.io/socket-io)
 
 --
 
@@ -22,8 +23,19 @@ Com ela, podemos implementar mecanismos complexos de maneira mais simples para, 
 
 ## Como funciona?
 
-O socket.io funciona através de eventos do Node.js. Ao escutar um evento nós temos a possibilidade de definir uma ação para o mesmo. Por exemplo: chamar uma função que emite um alerta de uma pessoa que acabou de se conectar ao servidor.
+O socket.io funciona através de eventos do Node.js. Ao escutar um evento, nós temos a possibilidade de definir uma ação para o mesmo. Por exemplo: chamar uma função que emite um alerta de uma pessoa que acabou de se conectar ao servidor.
 
 ---
 
-## TBD
+## Objetivo do dia
+
+- Construir um chat que possibilite a conexão de multiplas pessoas usuárias.
+
+- Gravar as informações das mensagens em um banco de dados em um banco de dados.
+
+---
+
+## Divisão da aula
+
+- Backend - Pedro
+- Frontend - Gabriel
