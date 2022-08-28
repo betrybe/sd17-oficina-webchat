@@ -39,3 +39,22 @@ O socket.io funciona através de eventos do Node.js. Ao escutar um evento, nós 
 
 - Backend - Pedro
 - Frontend - Gabriel
+
+--
+
+# Estrutura
+
+--
+
+## Backend
+
+- Configuração do socket
+
+- Estruturação dos eventos de emissão e recepção
+
+--
+
+## Frontend
+
+- Estruturação dos eventos de emissão e recepção
+

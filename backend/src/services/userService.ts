@@ -70,7 +70,7 @@ export class UserService {
    }
 
    async create({ name, email, password }: IUser) {
-      const secret = process.env.JWT_SECRET as string;
+      const secret = process.env.JWT_SECRET || 'webchat';
 
       await this.validateCreateNewUser(password, email);
 
@@ -80,7 +80,7 @@ export class UserService {
          password: bcryptjs.hashSync(password, 8),
       });
 
-      const token = jwt.sign({}, secret, {
+      const token = jwt.sign({expiresIn: '7d'}, secret, {
          subject: JSON.stringify({
             userId: user.id,
          }),

@@ -5,7 +5,7 @@ import { UserService } from '../services/userService';
 
 async function getUser(token: string) {
   const userService = new UserService();
-  const secret = process.env.JWT_SECRET as string;
+  const secret = process.env.JWT_SECRET || 'webchat';
   const { sub } = verify(token, secret);
   const data = JSON.parse(sub as string);
 
