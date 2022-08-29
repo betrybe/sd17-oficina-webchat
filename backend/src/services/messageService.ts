@@ -7,12 +7,7 @@ export class MessageService {
       const newMessage = await MessageModel.create({
          message,
          userId,
-      }, {
-         include: [{ model: UserModel, as: "user", attributes: ["name"] }],
       });
-
-      console.log(newMessage);
-      
 
       const fullMessage = await MessageModel.findOne({
          where: { id: newMessage.id },

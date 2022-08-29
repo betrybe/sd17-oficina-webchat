@@ -1,18 +1,10 @@
-import {
-   InputHTMLAttributes,
-   useCallback,
-   useEffect,
-   useRef,
-   useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiLogOut, FiSend } from "react-icons/fi";
 import { toast } from "react-toastify";
-import io from "socket.io-client";
+import { io } from "socket.io-client";
 import { useAuth } from "../../hooks/auth";
 import { api } from "../../services/api";
 import styles from "./styles.module.scss";
-
-const socket = io("http://localhost:3333");
 
 interface IMessage {
    id: number;
@@ -21,20 +13,18 @@ interface IMessage {
    message: string;
    received: boolean;
 }
+
+const socket = io("http://localhost:3333");
+
 export function Home() {
    const { signOut, user } = useAuth();
    const inputRef = useRef<HTMLInputElement>(null);
-   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-   function scrollToBottom() {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-   }
+   const [messages, setMessages] = useState<IMessage[]>([] as IMessage[]);
 
    useEffect(() => {
-      async function loadAllMessages() {
+      async function loadMessages() {
          const { data } = await api.get("/messages");
-
          const messagesFormatted = data.map((item: any) => ({
             id: item.id,
             date: new Date(item.createdAt).toLocaleString("pt-BR", {
@@ -48,7 +38,8 @@ export function Home() {
 
          setMessages(messagesFormatted);
       }
-      loadAllMessages();
+
+      loadMessages();
    }, []);
 
    useEffect(() => {
@@ -57,7 +48,7 @@ export function Home() {
 
    useEffect(() => {
       socket.on("connect", () => {
-         console.log(`Socket ${socket.id} connected`);
+         console.log(`Socket ${socket.id}`);
       });
 
       socket.on("receiveMessage", (data) => {
@@ -81,17 +72,20 @@ export function Home() {
       };
    }, []);
 
+   function scrollToBottom() {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+   }
+
    async function sendMessage(e: any) {
       e.preventDefault();
       try {
          const message = inputRef.current?.value;
-
          if (!message) {
             toast.warning("Informe uma mensagem");
             return;
          }
-         await api.post("messages", { message });
-         inputRef.current.value = ''
+         await api.post("/messages", { message });
+         inputRef.current.value = "";
          inputRef.current.focus();
          scrollToBottom();
       } catch (error) {
@@ -141,9 +135,10 @@ export function Home() {
                })}
                <div ref={messagesEndRef} />
             </div>
+
             <form onSubmit={sendMessage} className={styles.sendMessage}>
                <div className={styles.formGroup}>
-                  <input ref={inputRef} type="text" placeholder="Mensagem" />
+                  <input ref={inputRef} placeholder="Mensagem" />
                   <button type="submit">
                      <FiSend />
                   </button>

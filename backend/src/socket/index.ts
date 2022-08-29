@@ -11,11 +11,11 @@ export let serverIO: Server<
 export function startInstanceSocket(server: any) {
    const io = new Server(server, {
       cors: {
-         origin: "*",
-      },
+         origin: '*'
+      }
    });
 
-   io.on("connection", () => {});
+   io.on("connection", () => { });
 
    serverIO = io;
 }
